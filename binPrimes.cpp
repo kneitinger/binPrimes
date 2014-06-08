@@ -1,4 +1,5 @@
-// tatPrint (or stylized binary prime number generator)
+// binPrimes (stylized binary-prime-number-generator)/
+// Kyle tattoo replicator
 // Copyright (C) 2014 Kyle J. Kneitinger
 
 #include <iostream>
@@ -63,12 +64,16 @@ void toBin(int n, bool* bit) {
 }
 
 bool isPrime(int n) {
-    if (n == 2) {
+    if (n == 2)
         return true;
-    }
+
+    if (n%2 == 0)
+        return false;
+
     for (int i = 3; i <= sqrt(n); i += 2) {
-        if (n % i == 0) {   // Test odd divisors from 3 to sqrt(n)
+        if (n % i == 0)    // Test odd divisors from 3 to sqrt(n)
             return false;   // If no remainder, then composite.
+
     }
     return true;        // Otherwise prime
 }
