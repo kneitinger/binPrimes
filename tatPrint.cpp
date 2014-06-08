@@ -1,3 +1,6 @@
+// tatPrint (or stylized binary prime number generator)
+// Copyright (C) 2014 Kyle J. Kneitinger
+
 #include <iostream>
 #include <cmath>
 
@@ -19,6 +22,7 @@ int main() {
         }
     }
 
+    // Populate the array with the binary values of the first MAXLEVEL primes
     for (int n=2,p=0; p < MAXLEVEL; n++) {
         if(isPrime(n)){
             toBin( n, &chart[p][BITS-1] );
@@ -29,7 +33,6 @@ int main() {
 
     for (int i = 0; i < MAXLEVEL; i++) {
         for (int j = 0, k = 0;  j < 2; k=(k+1)%BITS) {
-            cout << ' ';
             if (chart[i][k] == 1) {
                 if (j == 0)
                     cout << (chart[i-1][k] == 0 ? "╔═╗" : "║ ║");
@@ -47,30 +50,25 @@ int main() {
 }
 
 void toBin(int n, bool* bit) {
-
-    int remainder;
+    int remain;
 
     if(n <= 1) {
         *bit = n;
         return;
     }
 
-    remainder = n%2;
+    remain = n%2;
     toBin(n >> 1, (bit-1));
-    *bit = remainder;
+    *bit = remain;
 }
 
 bool isPrime(int n) {
-    if (n == 2) {       // If 2, then prime (helps other optimizations)
+    if (n == 2) {
         return true;
-    }
-    if (n % 2 == 0) {   // If even, then prime.
-        return false;
     }
     for (int i = 3; i <= sqrt(n); i += 2) {
         if (n % i == 0) {   // Test odd divisors from 3 to sqrt(n)
-            return false;
-                    }
+            return false;   // If no remainder, then composite.
     }
-    return true;    // Otherwise, composite.
+    return true;        // Otherwise prime
 }
