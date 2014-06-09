@@ -4,41 +4,47 @@
 
 #include <iostream>
 #include <cmath>
-
-const int MAXLEVEL = 16;
-const int BITS = 6;
+#include <cstdlib>
 
 void toBin(int n, bool* bit);
 bool isPrime(int n);
+void calcNprimes(int n, int* primes);
+void buildArr(int rows, int columns);
 
+bool ** binChart;
 using namespace std;
 
-int main() {
+int main(int argc, char *argv[]) {
+
+	int MAXLEVEL = 16;
+	if (argc == 2)
+		MAXLEVEL = atoi(argv[1]);
+
+    int* primes = new int[MAXLEVEL];
+    calcNprimes(MAXLEVEL, primes);
+
+    // Calculate how many bits wide the largest number is:
+    int BITS = 1;
+    for (int test = 2; test < primes[MAXLEVEL-1]; BITS++) {
+        test*=2;
+    }
+
     // Create 2D array of booleans to hold binary values of primes
-    bool chart[MAXLEVEL][BITS];
+
     // Initialize the array
-    for(int i =0; i<MAXLEVEL;i++) {
-        for (int j = 0; j<BITS; j++) {
-            chart[i][j] = 0;
-        }
-    }
+    buildArr(MAXLEVEL,BITS);
+	for (int i = 0; i < MAXLEVEL; i++) {
+		toBin(primes[i], &binChart[i][BITS-1]);
+	}
 
-    // Populate the array with the binary values of the first MAXLEVEL primes
-    for (int n=2,p=0; p < MAXLEVEL; n++) {
-        if(isPrime(n)){
-            toBin( n, &chart[p][BITS-1] );
-            p++;
-
-        }
-    }
 
     for (int i = 0; i < MAXLEVEL; i++) {
         for (int j = 0, k = 0;  j < 2; k=(k+1)%BITS) {
-            if (chart[i][k] == 1) {
+            if (binChart[i][k] == 1) {
                 if (j == 0)
-                    cout << (chart[i-1][k] == 0 ? "╔═╗" : "║ ║");
+                    cout << (i == 0 || binChart[i-1][k] == 0 ? "╔═╗" : "║ ║");
                 else
-                    cout << (chart[i+1][k] == 0 ? "╚═╝" : "║ ║");
+                    cout << (i == MAXLEVEL || binChart[i+1][k] == 0 ? "╚═╝" : "║ ║");
             } else {
                 cout << "   ";
             }
@@ -46,6 +52,31 @@ int main() {
                 j++;
                 cout << endl;
             }
+        }
+    }
+
+    delete [] primes;
+    for (int i = 0; i < MAXLEVEL; i++) {
+        delete binChart[i];
+    }
+    delete [] binChart;
+}
+
+void calcNprimes(int level, int* primes) {
+    for (int n=2,p=0; p < level; n++) {
+        if(isPrime(n)){
+            primes[p] = n;
+            p++;
+        }
+    }
+}
+
+void buildArr(int rows, int columns) {
+    binChart = new bool*[rows+1];
+    for(int i =0; i<=rows;i++) {
+        binChart[i] = new bool[columns];
+        for (int j =0; j<columns; j++) {
+            binChart[i][j] = 0;
         }
     }
 }
